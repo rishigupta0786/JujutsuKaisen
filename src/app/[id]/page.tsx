@@ -1,17 +1,16 @@
 'use client'
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
-import { useParams } from 'next/navigation'
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from "@/components/ui/resizable"
+} from "@/components/ui/resizable";
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import { useParams } from 'next/navigation';
 
-import React from 'react'
-import ParticularDetail from '@/components/ParticularDetail';
 import Detail from '@/components/Detail';
-// import Image from 'next/image';
+import ParticularDetail from '@/components/ParticularDetail';
+import Image from 'next/image';
 interface JJKDataItem {
   id: number;
   name: string;
@@ -62,13 +61,13 @@ export default function Page() {
             <ResizableHandle />
             <ResizablePanel defaultSize={60}>
               <div>
-                {/* <Image
+                <Image
                   src={filteredData[0].image_url}
                   alt={filteredData[0].name}
                   width={100}
                   height={100}
                   className='w-full mb-2'
-                /> */}
+                />
               </div>
             </ResizablePanel>
           </ResizablePanelGroup>
