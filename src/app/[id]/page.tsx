@@ -1,4 +1,6 @@
 'use client'
+import ParticularDetail from '@/components/ParticularDetail';
+import { Badge } from "@/components/ui/badge";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -6,11 +8,9 @@ import {
 } from "@/components/ui/resizable";
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import Image from 'next/image';
 import { useParams } from 'next/navigation';
 
-import Detail from '@/components/Detail';
-import ParticularDetail from '@/components/ParticularDetail';
-import Image from 'next/image';
 interface JJKDataItem {
   id: number;
   name: string;
@@ -23,58 +23,96 @@ interface JJKDataItem {
   appearance?: string;
   personality?: string;
 }
-export default function Page() {
 
+export default function Page() {
   const { id } = useParams();
   const { data, isLoading, error } = useQuery({
     queryKey: ['jjkdata'],
     queryFn: async () => {
       const response = await axios.get("/asset/JJKdata.json");
-      // console.log(response.data);
       return response.data.data;
     }
   });
+
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
+
   const filteredData = data?.filter((item: JJKDataItem) => {
-    const matchesFilter = Number(item.id) === Number(id);
-    return matchesFilter;
+    return Number(item.id) === Number(id);
   });
-  console.log(filteredData[0].image_url);
+
+  if (!filteredData || filteredData.length === 0) return <div>No data found</div>;
+
+  const character = filteredData[0];
 
   return (
-    <div>
-      <ResizablePanelGroup direction="horizontal" className="border">
-        <ResizablePanel defaultSize={70}>
-          <div className="h-[90vh]">
-            <ParticularDetail data={filteredData[0]} />
+    <div className="md:container mx-auto p-4">
+      {/* Mobile View (stacked vertically) */}
+      <div className="block md:hidden space-y-4">
+        <div className="bg-card rounded-lg p-4 shadow">
+          <Image
+            src={character.image_url}
+            alt={character.name}
+            width={400}
+            height={400}
+            className='w-full h-auto rounded-lg mb-4'
+            priority
+          />
+        </div>
+        
+        <div className="bg-card rounded-lg p-4 shadow">
+          <h2 className="text-2xl font-bold mb-4">Details</h2>
+          <div className="flex flex-col gap-3 text-xl">
+            <div>Species : <Badge variant="default">{character.species || "UNKNOWN"}</Badge> </div>
+            <div>Grade : <Badge variant="default">{character.grade || "UNKNOWN"}</Badge></div>
+            <div>Status : <Badge variant="default">{character.status || "UNKNOWN"}</Badge></div>
+            <div>Age : <Badge variant="destructive">{character.age || "UNKNOWN"}</Badge></div>
           </div>
-        </ResizablePanel>
-        <ResizableHandle />
-        <ResizablePanel defaultSize={30}>
-          <ResizablePanelGroup direction="vertical">
-            <ResizablePanel defaultSize={40}>
-              <div>
-                <Detail data={filteredData[0]} />
-              </div>
-            </ResizablePanel>
-            <ResizableHandle />
-            <ResizablePanel defaultSize={60}>
-              <div>
-                <Image
-                  src={filteredData[0].image_url}
-                  alt={filteredData[0].name}
-                  width={100}
-                  height={100}
-                  className='w-full mb-2'
-                />
-              </div>
-            </ResizablePanel>
-          </ResizablePanelGroup>
-        </ResizablePanel>
-      </ResizablePanelGroup>
+        </div>
+        
+        <div className="bg-card rounded-lg p-4 shadow">
+          <ParticularDetail data={character} />
+        </div>
+      </div>
 
-
+      {/* Desktop View (original resizable layout) */}
+      <div className="hidden md:block">
+        <ResizablePanelGroup direction="horizontal" className="border rounded-lg">
+          <ResizablePanel defaultSize={70}>
+            <div className="h-[90vh] p-4">
+              <ParticularDetail data={character} />
+            </div>
+          </ResizablePanel>
+          <ResizableHandle />
+          <ResizablePanel defaultSize={30}>
+            <ResizablePanelGroup direction="vertical">
+              <ResizablePanel defaultSize={40}>
+                <div className="p-4 space-y-4">
+                  <h2 className="text-2xl font-bold mb-4">Details</h2>
+                  <div className="flex flex-col gap-3 text-xl">
+                    <div>Species : <Badge variant="default">{character.species || "UNKNOWN"}</Badge> </div>
+                    <div>Grade : <Badge variant="default">{character.grade || "UNKNOWN"}</Badge></div>
+                    <div>Status : <Badge variant="default">{character.status || "UNKNOWN"}</Badge></div>
+                    <div>Age : <Badge variant="destructive">{character.age || "UNKNOWN"}</Badge></div>
+                  </div>
+                </div>
+              </ResizablePanel>
+              <ResizableHandle />
+              <ResizablePanel defaultSize={60}>
+                <div className="p-4">
+                  <Image
+                    src={character.image_url}
+                    alt={character.name}
+                    width={400}
+                    height={400}
+                    className='w-full h-auto rounded-lg mb-4'
+                  />
+                </div>
+              </ResizablePanel>
+            </ResizablePanelGroup>
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </div>
     </div>
   )
 }

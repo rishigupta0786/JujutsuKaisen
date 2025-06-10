@@ -44,9 +44,9 @@ export default function Alldata() {
 
     return (
         <>
-            <div className='flex mb-4 justify-between'>
+            <div className='flex flex-col md:flex-row mb-4 justify-between gap-4'>
                 <div className='flex justify-center gap-4 items-center'>
-                    <p className='text-xl '> Filter: </p>
+                    <p className='text-xl'>Filter:</p>
                     <select
                         className='border rounded-sm p-2 bg-slate-950'
                         value={filter}
@@ -57,30 +57,34 @@ export default function Alldata() {
                         <option value="cursed">Cursed Spirits</option>
                     </select>
                 </div>
-                <div className='font-abcd text-4xl text-shadow-red-900 text-red-500'>
-                    J U J U T S U &nbsp;  K A I S E N  
+                <div className='font-abcd text-2xl sm:text-3xl md:text-4xl text-shadow-red-900 text-red-500 text-center'>
+                    J U J U T S U &nbsp; K A I S E N
                 </div>
-                <input
-                    type="text"
-                    placeholder="Search by name"
-                    className='border rounded p-2 ml-4'
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                />
+                <div className='flex justify-center'>
+                    <input
+                        type="text"
+                        placeholder="Search by name"
+                        className='border rounded p-2 w-full max-w-md'
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                </div>
             </div>
-            <div className='grid grid-cols-5 gap-4'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4'>
                 {filteredData?.map((item: JJKDataItem) => {
                     return (
-                        <div key={item.id} className='border rounded p-4'>
+                        <div key={item.id} className='border rounded p-4 hover:scale-105 transition-transform duration-200'>
                             <Link href={`/${item.id}`}>
-                                 <Image
-                                src={item.image_url}
-                                alt={item.name}
-                                width={100}     
-                                height={100}   
-                                className='w-full mb-2'
-                                /> 
-                                <div className=' flex justify-center pb-2'>
+                                <div className='relative w-full h-64 mb-2'> {/* Fixed height container */}
+                                    <Image
+                                        src={item.image_url}
+                                        alt={item.name}
+                                        fill
+                                        className='object-contain'
+                                        style={{ position: 'absolute', top: 0, left: 0 }}
+                                    />
+                                </div>
+                                <div className='flex justify-center pb-2'>
                                     <h2
                                         className={`text-lg font-bold font-newfont 
                                         ${item.species?.toLowerCase() === 'human' ? 'text-blue-400' : 'text-red-500'}`}
@@ -88,7 +92,6 @@ export default function Alldata() {
                                         {item.name}
                                     </h2>
                                 </div>
-
                                 <p><strong>Species:</strong> {item.species || 'Cursed species'}</p>
                                 <p><strong>Grade:</strong> {item.grade || 'UNKNOWN'}</p>
                                 <p><strong>Status:</strong> {item.status || 'UNKNOWN'}</p>
@@ -96,7 +99,7 @@ export default function Alldata() {
                         </div>
                     );
                 })}
-            </div >
+            </div>
         </>
     );
 }
