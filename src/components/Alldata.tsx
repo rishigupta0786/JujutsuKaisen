@@ -26,7 +26,6 @@ export default function Alldata() {
         queryKey: ['jjkdata'],
         queryFn: async () => {
             const response = await axios.get("/asset/JJKdata.json");
-            console.log(response.data);
             return response.data.data;
         }
     });
